@@ -91,48 +91,53 @@ An async, full-stack scraping platform with background workers, three-tier brows
 ## 🏗️ Architecture
 
 ```mermaid
-flowchart LR
-    subgraph UI["🖥️ Presentation"]
-        F["Next.js Dashboard"]
+%%{init: {"theme":"base","themeVariables":{"fontSize":"18px","lineColor":"#22D3EE","primaryTextColor":"#F8FAFC","edgeLabelBackground":"#0B1220"},"flowchart":{"nodeSpacing":35,"rankSpacing":55,"curve":"basis","padding":14}}}%%
+flowchart TB
+    UI["🖥️ <b>Next.js Dashboard</b><br/>submit URLs · live status · downloads"]
+
+    subgraph API["⚡ API LAYER"]
+        A["<b>FastAPI</b> · port 8800"]
     end
 
-    subgraph API["⚡ API Layer"]
-        A["FastAPI :8800"]
+    subgraph Q["⚙️ TASK LAYER"]
+        direction LR
+        R[("<b>Redis</b><br/>broker")] --> W["<b>Celery</b><br/>worker"]
     end
 
-    subgraph Q["⚙️ Task Layer"]
-        R[("Redis")]
-        W["Celery Worker"]
+    subgraph B["🤖 BROWSER LAYER"]
+        direction LR
+        P1["① <b>Playwright</b>"] -.->|fallback| P2["② <b>Stealth</b>"] -.->|fallback| P3["③ <b>Nodriver</b>"]
     end
 
-    subgraph B["🤖 Browser Layer"]
-        P1["1. Playwright"]
-        P2["2. Playwright Stealth"]
-        P3["3. Nodriver"]
+    subgraph D["📊 DATA LAYER"]
+        direction LR
+        X["<b>BeautifulSoup4</b><br/>+ Pydantic"] --> PD["<b>Pandas</b><br/>+ NumPy"]
+        PD --> DB[("<b>PostgreSQL</b>")]
+        PD --> XL["<b>Excel</b><br/>+ CSV"]
     end
 
-    subgraph D["📊 Data Layer"]
-        X["BeautifulSoup4 + Pydantic"]
-        PD["Pandas + NumPy"]
-        DB[("PostgreSQL")]
-        XL["Excel + CSV"]
-    end
+    UI ==>|"POST /scrape"| API
+    API ==>|"queue task"| Q
+    Q ==>|"run scraping"| B
+    B ==>|"raw HTML"| D
+    API -.->|"status + downloads"| UI
 
-    F -- "POST /scrape" --> A
-    A -- "queue task" --> R
-    R --> W
-    W --> P1
-    P1 -. "blocked or too short" .-> P2
-    P2 -. "still failing" .-> P3
-    P1 --> X
-    P2 --> X
-    P3 --> X
-    X --> PD
-    PD --> DB
-    PD --> XL
-    F -. "poll /scrape/status" .-> A
-    A -. "result from Redis" .-> F
-    XL -. "download" .-> F
+    classDef ui fill:#1E3A8A,stroke:#22D3EE,stroke-width:2px,color:#F8FAFC
+    classDef api fill:#0B1220,stroke:#3B82F6,stroke-width:2px,color:#F8FAFC
+    classDef task fill:#111827,stroke:#22D3EE,stroke-width:2px,color:#F8FAFC
+    classDef browser fill:#1E293B,stroke:#8B5CF6,stroke-width:2px,color:#F8FAFC
+    classDef data fill:#0F172A,stroke:#3B82F6,stroke-width:2px,color:#F8FAFC
+
+    class UI ui
+    class A api
+    class R,W task
+    class P1,P2,P3 browser
+    class X,PD,DB,XL data
+
+    style API fill:#0B122022,stroke:#3B82F6,stroke-width:2px,color:#22D3EE
+    style Q fill:#0B122022,stroke:#22D3EE,stroke-width:2px,color:#22D3EE
+    style B fill:#0B122022,stroke:#8B5CF6,stroke-width:2px,color:#A78BFA
+    style D fill:#0B122022,stroke:#3B82F6,stroke-width:2px,color:#22D3EE
 ```
 
 **In short:** the dashboard sends URLs → FastAPI queues a Celery task through Redis → the worker scrapes → parsers structure the data → Pandas cleans it and saves Excel, CSV and (optionally) PostgreSQL → the dashboard polls the status and offers downloads.
