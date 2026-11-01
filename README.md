@@ -90,6 +90,8 @@ An async, full-stack scraping platform with background workers, three-tier brows
 
 ## 🏗️ Architecture
 
+## 🏗️ Architecture
+
 ```mermaid
 %%{init: {"theme":"base","themeVariables":{"fontSize":"18px","lineColor":"#22D3EE","primaryTextColor":"#F8FAFC","edgeLabelBackground":"#0B1220"},"flowchart":{"nodeSpacing":35,"rankSpacing":55,"curve":"basis","padding":14}}}%%
 flowchart TB
@@ -138,7 +140,6 @@ flowchart TB
     style Q fill:#0B122022,stroke:#22D3EE,stroke-width:2px,color:#22D3EE
     style B fill:#0B122022,stroke:#8B5CF6,stroke-width:2px,color:#A78BFA
     style D fill:#0B122022,stroke:#3B82F6,stroke-width:2px,color:#22D3EE
-```
 
 **In short:** the dashboard sends URLs → FastAPI queues a Celery task through Redis → the worker scrapes → parsers structure the data → Pandas cleans it and saves Excel, CSV and (optionally) PostgreSQL → the dashboard polls the status and offers downloads.
 
