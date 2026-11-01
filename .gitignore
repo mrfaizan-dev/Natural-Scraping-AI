@@ -1,0 +1,48 @@
+# ======================
+# API KEYS AND SECRETS
+# ======================
+.env
+.env.*
+!.env.example
+
+# ======================
+# PYTHON
+# ======================
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# ======================
+# NEXT.JS
+# ======================
+node_modules/
+.next/
+out/
+.vercel/
+
+# ======================
+# GENERATED SCRAPING DATA
+# ======================
+downloaded_files/
+user_downloads/
+
+# ======================
+# TEMPORARY FILES
+# ======================
+*.log
+buf_*
+
+# Files not reviewed yet
+requiremens.txtt
+celery_run_code.txt
+
+# ======================
+# IDE AND OS
+# ======================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+zm.py
