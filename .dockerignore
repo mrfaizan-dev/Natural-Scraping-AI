@@ -17,3 +17,7 @@ README.md
 *.log
 .env.*
 downloaded_files/
+node_modules/
+.next/
+out/
+.vercel/
