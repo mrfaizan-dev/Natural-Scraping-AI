@@ -133,56 +133,58 @@ Open **http://localhost:3000** to access the dashboard.
 ## 🏗️ Architecture
 
 ```mermaid
-%%{init: {"theme":"base","themeVariables":{"fontSize":"16px","lineColor":"#22D3EE","primaryTextColor":"#F8FAFC","edgeLabelBackground":"#0B1220"},"flowchart":{"nodeSpacing":35,"rankSpacing":50,"curve":"basis","padding":14}}}%%
+%%{init: {"theme":"base","themeVariables":{"fontSize":"18px","lineColor":"#22D3EE","primaryTextColor":"#F8FAFC","edgeLabelBackground":"#0B1220"},"flowchart":{"nodeSpacing":35,"rankSpacing":55,"curve":"basis","padding":14}}}%%
 flowchart TB
-    UI["🖥️ Next.js Dashboard<br/>Submit URLs · Live Status · Downloads"]
+    UI["🖥️ <b>Next.js Dashboard</b><br/>submit URLs · live status · downloads"]
 
-    subgraph API["⚡ API LAYER"]
-        A["FastAPI · Port 8800"]
-    end
+    subgraph API["⚡ API LAYER"]
+        A["<b>FastAPI</b> · port 8800"]
+    end
 
-    subgraph TASKS["⚙️ TASK LAYER"]
-        direction LR
-        R[("Redis<br/>Broker & Results")] --> W["Celery Worker"]
-    end
+    subgraph Q["⚙️ TASK LAYER"]
+        direction LR
+        R[("<b>Redis</b><br/>broker")] --> W["<b>Celery</b><br/>worker"]
+    end
 
-    subgraph BROWSER["🤖 BROWSER AUTOMATION LAYER"]
-        direction LR
-        P1["① Playwright"] -. "Fallback" .-> P2["② Playwright Retry"]
-        P2 -. "Fallback" .-> P3["③ Nodriver"]
-    end
+    subgraph B["🤖 BROWSER LAYER"]
+        direction LR
+        P1["① <b>Playwright</b>"] -.->|fallback| P2["② <b>Stealth</b>"] -.->|fallback| P3["③ <b>Nodriver</b>"]
+    end
 
-    subgraph DATA["📊 DATA LAYER"]
-        direction LR
-        X["BeautifulSoup4<br/>+ Pydantic"] --> PD["Pandas<br/>+ NumPy"]
-        PD --> DB[("PostgreSQL<br/>Optional")]
-        PD --> XL["Excel<br/>+ CSV"]
-    end
+    subgraph D["📊 DATA LAYER"]
+        direction LR
+        X["<b>BeautifulSoup4</b><br/>+ Pydantic"] --> PD["<b>Pandas</b><br/>+ NumPy"]
+        PD --> DB[("<b>PostgreSQL</b>")]
+        PD --> XL["<b>Excel</b><br/>+ CSV"]
+    end
 
-    UI ==>|"POST /scrape"| A
-    A ==>|"Queue task"| R
-    W ==>|"Run scraping"| P1
-    P1 --> X
-    P2 --> X
-    P3 --> X
-    A -.->|"Status & download endpoints"| UI
+    UI ==>|"POST /scrape"| API
+    API ==>|"queue task"| Q
+    Q ==>|"run scraping"| B
+    B ==>|"raw HTML"| D
+    API -.->|"status + downloads"| UI
 
-    classDef ui fill:#1E3A8A,stroke:#22D3EE,stroke-width:2px,color:#F8FAFC
-    classDef api fill:#0B1220,stroke:#3B82F6,stroke-width:2px,color:#F8FAFC
-    classDef task fill:#111827,stroke:#22D3EE,stroke-width:2px,color:#F8FAFC
-    classDef browser fill:#1E293B,stroke:#64748B,stroke-width:2px,color:#F8FAFC
-    classDef data fill:#0F172A,stroke:#3B82F6,stroke-width:2px,color:#F8FAFC
+    classDef ui fill:#1E3A8A,stroke:#22D3EE,stroke-width:2px,color:#F8FAFC
+    classDef api fill:#0B1220,stroke:#3B82F6,stroke-width:2px,color:#F8FAFC
+    classDef task fill:#111827,stroke:#22D3EE,stroke-width:2px,color:#F8FAFC
+    classDef browser fill:#1E293B,stroke:#8B5CF6,stroke-width:2px,color:#F8FAFC
+    classDef data fill:#0F172A,stroke:#3B82F6,stroke-width:2px,color:#F8FAFC
 
-    class UI ui
-    class A api
-    class R,W task
-    class P1,P2,P3 browser
-    class X,PD,DB,XL data
+    class UI ui
+    class A api
+    class R,W task
+    class P1,P2,P3 browser
+    class X,PD,DB,XL data
+
+    style API fill:#0B122022,stroke:#3B82F6,stroke-width:2px,color:#22D3EE
+    style Q fill:#0B122022,stroke:#22D3EE,stroke-width:2px,color:#22D3EE
+    style B fill:#0B122022,stroke:#8B5CF6,stroke-width:2px,color:#A78BFA
+    style D fill:#0B122022,stroke:#3B82F6,stroke-width:2px,color:#22D3EE
 ```
 
-**In short:** The dashboard submits URLs to FastAPI. FastAPI queues a background task through Celery and Redis. The worker runs the browser automation workflow, extracts and validates data, and processes it with Pandas. The platform then creates Excel and CSV reports and can optionally store records in PostgreSQL. The dashboard polls task status and provides report downloads.
+**In short:** the dashboard sends URLs → FastAPI queues a Celery task through Redis → the worker scrapes → parsers structure the data → Pandas cleans it and saves Excel, CSV and (optionally) PostgreSQL → the dashboard polls the status and offers downloads.
 
-<br />
+<br/>
 
 ## 🛡️ Three-Tier Fallback
 
