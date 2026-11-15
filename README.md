@@ -2,6 +2,19 @@
 
 <img src="https://capsule-render.vercel.app/api?type=waving&height=220&color=0:0B1220,50:1E3A8A,100:22D3EE&text=Natural%20Scraping%20AI&fontColor=F8FAFC&fontSize=52&fontAlignY=38&desc=Agentic%20Web%20Scraper%20Pro&descAlignY=58&descSize=20" alt="Natural Scraping AI" width="100%" />
 
+<h2 align="center">Live Product Walkthrough & Demo</h2>
+
+<p align="center">
+  <b>Watch the multi-engine scraping pipeline, live dashboard, and automated Excel report generation in action.</b>
+</p>
+
+<p align="center">
+  <a href="YOUR_YOUTUBE_VIDEO_LINK_HERE" target="_blank">
+    <img src="./natural-scraping-banner.svg" alt="Natural Scraping AI Live Demo" width="100%">
+  </a>
+</p>
+
+
 ### ⚡ Intelligent Extraction · Multi-Engine Automation · Structured Data
 
 An asynchronous, full-stack web scraping platform with multi-engine browser automation, intelligent fallback, background workers, structured data processing, and professional Excel reports.
