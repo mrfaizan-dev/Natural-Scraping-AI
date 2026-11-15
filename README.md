@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="YOUR_YOUTUBE_VIDEO_LINK_HERE" target="_blank">
+  <a href="https://youtu.be/gGOepTONTek" target="_blank">
     <img src="./natural-scraping-banner.svg" alt="Natural Scraping AI Live Demo" width="100%">
   </a>
 </p>
