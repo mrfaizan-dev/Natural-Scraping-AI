@@ -17,7 +17,7 @@
 
 ### ⚡ Intelligent Extraction · Multi-Engine Automation · Structured Data
 
-An asynchronous, full-stack web scraping platform with multi-engine browser automation, intelligent fallback, background workers, structured data processing, and professional Excel reports
+An asynchronous, full-stack web scraping platform with multi-engine browser automation, intelligent fallback, background workers, structured data processing, and professional Excel reports.
 
 <br />
 
